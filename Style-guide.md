@@ -5,7 +5,7 @@
 curly brackets start on the same line one space after the function they belong to is declared
 ex.
 ```
-loop {
+loop() {
   thing
 }
 ```
@@ -13,8 +13,8 @@ loop {
 lines within curly brackets are given a number of tabs equal to how many curly brackets they are inside of
 ex.
 ```
-loop {
-  one tab {
+loop() {
+  one_tab() {
     2 tabs
   }
 }
@@ -23,19 +23,19 @@ loop {
 between two functions there is a newline
 ex.
 ```
-func1 {
+func1() {
   thing
 }
 
-func2 {
+func2() {
   thing
 }
 ```
 
-comments have a space before the double slash
+comments have a tab before the double slash
 ex.
 ```
-code //comment
+code  //comment
 ```
 
 ## best practises
@@ -43,15 +43,15 @@ code //comment
 avoid having code that is nested more than 3 times, if possible make a sub function
 ex.
 ```
-func1 {
+func1() {
   if(something) {
     while(something else) {
-      func2()
+      func2();
     }
   }
 }
 
-func2 {
+func2() {
   if(another thing) {
     code
   }
@@ -61,14 +61,14 @@ func2 {
 if code is reused make it a function
 ex.
 ```
-func1 {
-  func2()
+func1() {
+  func2();
   if(something) {
-    func2()
+    func2();
   }
 }
 
-func2 {
+func2() {
   code
 }
 ```
@@ -76,12 +76,34 @@ func2 {
 always add comments for everything not explicit in the code
 ex.
 ```
-func1 {
+func1() {
   z = x + y;
-  func2(z); //does thing
+  func2(z);  //does thing
 }
 
 func2(int z) {
   code
 }
+```
+
+where possible use c functions instead of c++ functions
+
+avoid using global variables where possible
+
+variables start with lowercase and if the variable is multiple words the start of each subsequent word is capitalized
+ex.
+```
+int thisIsAnExampleVariable
+```
+
+the start of functions is capitalized and if the function is multiple words the start of each subsequent word is capitalized
+ex.
+```
+ThisIsAnExampleFunction()
+```
+
+defines are fuly capitalized with underscores between words
+ex.
+```
+#define THIS_IS_AN_EXAMPLE_DEFINE
 ```
