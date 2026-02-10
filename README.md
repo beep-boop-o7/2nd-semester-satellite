@@ -28,7 +28,7 @@ git remote add origin https://github.com/beep-boop-o7/2nd-semester-satellite.git
 
 make a new branch for the feature you are working on (only do this for new features)
 ```
-git checkout -b feature/feature_name
+git checkout -b subsystem/feature_name
 ```
 
 commit the changes you have made to the local branch (with a brief description)
@@ -38,7 +38,7 @@ git commit -m "This is a brief description"
 
 push your local branch upstream (to github)
 ```
-git push -u origin feature/feature_name
+git push -u origin subsystem/feature_name
 ```
 after that you go into github to make a merge request to merge your branch into main
 
