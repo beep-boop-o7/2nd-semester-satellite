@@ -42,7 +42,7 @@ void func2() {
 }
 ```
 
-comments should be allinged and seperated from code
+comments should be alinged and seperated from code
 ex.
 ```
 code      //comment
