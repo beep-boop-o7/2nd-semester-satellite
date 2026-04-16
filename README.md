@@ -31,6 +31,11 @@ make a new branch for the feature you are working on (only do this for new featu
 git checkout -b subsystem/feature_name
 ```
 
+add changes to local branch (add all untracked)
+```
+git add -i
+```
+
 commit the changes you have made to the local branch (with a brief description)
 ```
 git commit -m "This is a brief description"
