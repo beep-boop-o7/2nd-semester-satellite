@@ -20,3 +20,5 @@ void calibrateGyro(int samples);
 void GyroInit(int samples);
 
 void updateGyro();
+
+void gyroSetup();
