@@ -1,6 +1,6 @@
 #include <SPI.h>
 #include <math.h>
-#define CS_PIN 53
+#define CS_PIN 8
 
 // Globale variabler
 struct {
@@ -45,7 +45,7 @@ void GyroVerifyConnection() {
 
 int16_t readGyroX() {
   digitalWrite(CS_PIN, LOW);
-  SPI.transfer(0x88);
+  SPI.transfer(0x8A);
   uint8_t low = SPI.transfer(0x00);
   uint8_t high = SPI.transfer(0x00);
   digitalWrite(CS_PIN, HIGH);
