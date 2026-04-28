@@ -1,13 +1,15 @@
+#ifndef Hall_effect_sensor
 #define Hall_effect_sensor
 
 #include "TMAG5170.hpp"
 #include <krnl.h>
 
 
-void taskSensor(float *Bx,float *By,float *Bz)
+void taskSensor(float *Bx,float *By,float *Bz);
 
-void callUpSemHallEffect(void)
+void callUpSemHallEffect(void);
 
-void startUpTMAG()
+void startUpTMAG();
 
 int magnetorquerSem;
+#endif
