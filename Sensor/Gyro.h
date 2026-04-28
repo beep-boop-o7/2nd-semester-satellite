@@ -1,5 +1,6 @@
 #include <SPI.h>
 #include <math.h>
+#define CS_PIN 8
 
 struct {
   float Angle = 0;
