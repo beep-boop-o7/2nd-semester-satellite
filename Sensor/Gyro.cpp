@@ -41,7 +41,7 @@ void GyroVerifyConnection() {
   delayMicroseconds(50);
 }
 
-int16_t readGyroX() {
+int16_t readGyroY() {
   digitalWrite(CS_PIN, LOW);
   SPI.transfer(0x8A);
   uint8_t low = SPI.transfer(0x00);
@@ -55,7 +55,7 @@ void calibrateGyro(int samples) {
   Serial.println("Kalibrerer... hold sensoren stille");
   long sum = 0;
   for (int i = 0; i < samples; i++) {
-    int16_t raw = readGyroX();
+    int16_t raw = readGyroY();
 
     sum += raw;
     delay(5);
@@ -72,7 +72,7 @@ void GyroInit(int samples) {
 }
 
 void updateGyro() {
-  int32_t raw = readGyroX();
+  int32_t raw = readGyroY();
 
   unsigned long now = micros();
   float dt = (now - Gyro_var.LastTime) * 1e-6f;
