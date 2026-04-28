@@ -14,7 +14,7 @@ void GyroMeasurementMode();
 
 void GyroVerifyConnection();
 
-int16_t readGyroX();
+int16_t readGyroY();
 
 void calibrateGyro(int samples);
 
