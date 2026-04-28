@@ -32,7 +32,7 @@ int SPI_Write_32_CRC(int chip_select_pin, int SPI_mode, uint8_t target_register,
  * @param SPI_mode the SPI mode of the slave (0, 1, 2, 3)
  * @param target_register 7bit address of the register you want to read from
  * @param next_command next command input (idk)
- * @param data 16bits to read from register and 12 bits of status
+ * @param data_struct 16bits to read from register and 12 bits of status
  */
 int SPI_Read_32_CRC(int chip_select_pin, int SPI_mode, uint8_t target_register, uint8_t next_command, SPI_data_32 *data_struct);
 
