@@ -109,7 +109,7 @@ void setup() {
 	Serial.println("just bef init part");
 	
 	k_init(3, 4, 2);
-	//     |  |  |--- num of mg Queues (2) hall effect, gyroscope
+	//     |  |  |-- num of msg Queues (2) hall effect, gyroscope
 	//     |  |----- num of semaphores (4) SPI, timer 1-2-3
 	//     |------------- num of tasks (3) hall, gyro, print
 	
