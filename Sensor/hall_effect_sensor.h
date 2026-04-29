@@ -1,7 +1,7 @@
 #ifndef Hall_effect_TMAG
 #define Hall_effect_TMAG
 
-#include "../Integration/rt_spi.h"
+#include "rt_spi.h"
 #include <krnl.h>
 
 typedef struct { //data for each axis

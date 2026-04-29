@@ -1,5 +1,12 @@
 #include "Gyro.h"
 
+struct {
+  float Filtered = 0.0;
+  float offset = 0.0;
+  float Sensitivity = 0.0048;
+  unsigned long LastTime = 0;
+} Gyro_var;
+
 void Gyro_Measurement_Mode(int CS_pin) {
   // Enable measurement mode
   SPI_Write_16(CS_pin, 3, 0x10, 0x02);
@@ -12,22 +19,18 @@ void Gyro_Verify_Connection(int CS_pin) {
   uint8_t id = 0;
   SPI_Read_16(CS_pin, 3, 0x00, &id);
 
-  Serial.print("ID (173 forventet): ");
-  Serial.println(id);
   k_sleep(1);
 
   // Verify
   uint8_t val = 0;
   SPI_Read_16(CS_pin, 3, 0x10, &val);
 
-  Serial.print("POWER_CTL (2 forventet): ");
-  Serial.println(val);
   k_sleep(1);
 }
 
 int16_t Read_Gyro_Y(int CS_pin) {
-  uint8_t low = SPI.transfer(0x00);
-  uint8_t high = SPI.transfer(0x00);
+  uint8_t low = 0;
+  uint8_t high = 0;
   SPI_Read_16(CS_pin, 3, 0x0A, &low);
   SPI_Read_16(CS_pin, 3, 0x0B, &high);
 
@@ -35,7 +38,6 @@ int16_t Read_Gyro_Y(int CS_pin) {
 }
 
 void Calibrate_Gyro(int samples, int CS_pin) {
-  Serial.println("Kalibrerer... hold sensoren stille");
   long sum = 0;
   for (int i = 0; i < samples; i++) {
     int16_t raw = Read_Gyro_Y(CS_pin);
@@ -44,8 +46,6 @@ void Calibrate_Gyro(int samples, int CS_pin) {
     k_sleep(5);
   }
   Gyro_var.offset = (float)sum / samples;
-  Serial.print("Offset: ");
-  Serial.println(Gyro_var.offset);
 }
 
 void Gyro_Init(int samples, int CS_pin) {
@@ -54,7 +54,7 @@ void Gyro_Init(int samples, int CS_pin) {
   Calibrate_Gyro(samples, CS_pin);
 }
 
-void Update_Gyro(int CS_pin) {
+void Update_Gyro(gyro_sensor_data *gyro_data, int CS_pin) {
   int32_t raw = Read_Gyro_Y(CS_pin);
 
   unsigned long now = micros();
@@ -68,11 +68,8 @@ void Update_Gyro(int CS_pin) {
     Gyro_var.offset = 0.999f * Gyro_var.offset + 0.001f * raw;
   }
 
-  Gyro_var.Angle += rate_dps * dt;
-
-  Serial.print(Gyro_var.Angle, 1);
-  Serial.print(" til tiden: ");
-  Serial.println(millis());
+  gyro_data->Angle += rate_dps * dt;
+  gyro_data->rate = rate_dps;
 }
 
 void Gyro_Setup(int CS_pin){

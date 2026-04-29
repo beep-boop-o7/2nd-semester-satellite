@@ -1,7 +1,8 @@
 #include "Gyro.h"
 #include "hall_effect_sensor.h"
-#include "../Integration/rt_spi.h"
+#include "rt_spi.h"
 #include <krnl.h>
+#include <Arduino.h>
 
 #define SPI_CLOCK A0
 #define SPI_MOSI A1
@@ -9,11 +10,6 @@
 #define HALL_CS_PIN A3
 #define HALL_ALERT_PIN A4
 #define GYRO_CS_PIN A5
-
-typedef struct{
-    float Angle;
-    float rate;
-} gyro_sensor_data;
 
 #define STK 150
 char t1[STK], t2[STK], t3[STK];
@@ -25,6 +21,8 @@ struct k_t *Timed_Sem1, *Timed_Sem2, *Timed_Sem3;
 hall_sensor_data Hall_Data_Queue[4];
 
 gyro_sensor_data Gyro_Data_Queue[4];
+
+struct k_msg_t *Queue_Hall, *Queue_Gyro;
 
 void Task_Hall() {
     hall_sensor_data hall_data;
@@ -43,7 +41,7 @@ void Task_Hall() {
 
         Read_TMAG(&hall_data, HALL_CS_PIN, HALL_ALERT_PIN);
 
-        k_send(Hall_Data_Queue, &hall_data);
+        k_send(Queue_Hall, &hall_data);
     }
 }
 
@@ -62,7 +60,7 @@ void Task_Gyro() {
 
         Update_Gyro(&gyro_data, GYRO_CS_PIN);
 
-        k_send(Gyro_Data_Queue, &gyro_data);
+        k_send(Queue_Gyro, &gyro_data);
     }
 }
 
@@ -71,13 +69,20 @@ void Task_Print() {
     gyro_sensor_data gyro_data, gyro_tmp;
     int missed;
 
+    hall_data.x = 0;
+    hall_data.y = 0;
+    hall_data.z = 0;
+
+    gyro_data.Angle = 0;
+    gyro_data.rate = 0;
+
     k_set_sem_timer(Timed_Sem3, 1000);
 
     while (1) {
-        if(k_receive(Hall_Data_Queue, &hall_tmp, -1, &missed) != -1) {
+        if(k_receive(Queue_Hall, &hall_tmp, -1, &missed) != -1) {
             hall_data = hall_tmp;
         }
-        if(k_receive(Gyro_Data_Queue, &gyro_tmp, -1, &missed) != -1) {
+        if(k_receive(Queue_Gyro, &gyro_tmp, -1, &missed) != -1) {
             gyro_data = gyro_tmp;
         }
         if(k_wait(Timed_Sem1, -1) < 0) {
@@ -119,7 +124,7 @@ void setup() {
 	Timed_Sem2 = k_crt_sem(0, 1); // 0: start value, 1: max value (clipping)
     Timed_Sem3 = k_crt_sem(0, 1); // 0: start value, 1: max value (clipping)
 
-    void Init_SPI(SPI_MOSI, SPI_MISO, SPI_CLOCK);
+    Init_SPI(SPI_MOSI, SPI_MISO, SPI_CLOCK);
 
 	Serial.println("just bef k_start");
 	

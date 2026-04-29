@@ -1,23 +1,21 @@
-#ifndef Gyro.h
-#define Gyro.h
+#ifndef Gyroscope
+#define Gyroscope
 
-#include "../Integration/rt_spi.h"
+#include "rt_spi.h"
 #include <math.h>
 #include <krnl.h>
 
-struct {
-  float Angle = 0.0;
-  float Filtered = 0.0;
-  float offset = 0.0;
-  float Sensitivity = 0.0048;
-  unsigned long LastTime = 0;
-} Gyro_var;
+typedef struct{
+    float Angle;
+    float rate;
+} gyro_sensor_data;
 
 /**
  * @brief updates gyroscope (needs clarification)
+ * @param gyro_data struct data will be returned in
  * @param CS_pin the pin chip select is connected too
  */
-void Update_Gyro(int CS_pin);
+void Update_Gyro(gyro_sensor_data *gyro_data, int CS_pin);
 
 /**
  * @brief Starter gyroskopet, og indeholder GyroInit()

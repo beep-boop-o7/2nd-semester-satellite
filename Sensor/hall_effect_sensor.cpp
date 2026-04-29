@@ -1,9 +1,9 @@
 #include "hall_effect_sensor.h"
 
-void Clear_TMAG_SPI_Errors(int CS_pin, SPI_data_32 spi_data) {
-    SPI_Read_32_CRC(A3, 0, 0x0D, 0, spi_data);
+void Clear_TMAG_SPI_Errors(int CS_pin, SPI_data_32 *spi_data) {
+    SPI_Read_32_CRC(CS_pin, 0, 0x0D, 0, spi_data);
 	delay(10);
-	SPI_Read_32_CRC(A3, 0, 0x0D, 0, spi_data);
+	SPI_Read_32_CRC(CS_pin, 0, 0x0D, 0, spi_data);
 	delay(10);
 }
 
@@ -14,7 +14,7 @@ int Read_TMAG(hall_sensor_data *data, int CS_pin, int alert_pin) {
     digitalWrite(alert_pin, HIGH);
     k_sleep(100);
 	SPI_Read_32_CRC(A3, 0, 0x9, 1, &spi_data);
-	hall_sensor_data->x = ((double) ((int16_t)spi_data.data)) / 1308.0;
+	data->x = ((double) ((int16_t)spi_data.data)) / 1308.0;
 
     if(spi_data.status_bits & 0b111100001000) {
         int err = spi_data.status_bits;
@@ -23,7 +23,7 @@ int Read_TMAG(hall_sensor_data *data, int CS_pin, int alert_pin) {
     }
 
 	SPI_Read_32_CRC(A3, 0, 0xA, 1, &spi_data);
-	hall_sensor_data->y = ((double) ((int16_t)spi_data.data)) / 1308.0;
+	data->y = ((double) ((int16_t)spi_data.data)) / 1308.0;
 
     if(spi_data.status_bits & 0b111100001000) {
         int err = spi_data.status_bits;
@@ -32,7 +32,7 @@ int Read_TMAG(hall_sensor_data *data, int CS_pin, int alert_pin) {
     }
 
 	SPI_Read_32_CRC(A3, 0, 0xB, 1, &spi_data);
-	hall_sensor_data->z = ((double) ((int16_t)spi_data.data)) / 1308.0;
+	data->z = ((double) ((int16_t)spi_data.data)) / 1308.0;
 
     if(spi_data.status_bits & 0b111100001000) {
         int err = spi_data.status_bits;
