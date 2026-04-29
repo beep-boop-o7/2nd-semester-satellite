@@ -85,7 +85,7 @@ void Task_Print() {
         if(k_receive(Queue_Gyro, &gyro_tmp, -1, &missed) != -1) {
             gyro_data = gyro_tmp;
         }
-        if(k_wait(Timed_Sem1, -1) < 0) {
+        if(k_wait(Timed_Sem1, -1) >= 0) {
             Serial.println("Hall Data");
             Serial.print("x: ");
             Serial.print(hall_data.x);
