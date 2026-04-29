@@ -1,5 +1,5 @@
-#ifndef "Gyro.h"
-#define "Gyro.h"
+#ifndef Gyro.h
+#define Gyro.h
 
 #include "../Integration/rt_spi.h"
 #include <math.h>
