@@ -1,9 +1,9 @@
-#include <SPI.h>
+#include "../Integration/rt_spi.h"
 #include <math.h>
 #define CS_PIN 8
 
 struct {
-  float Angle = 0;
+  float Angle = 0.0;
   float Filtered = 0.0;
   float offset = 0.0;
   float Sensitivity = 0.0048;
@@ -25,5 +25,5 @@ void updateGyro();
 
 /**
  * @brief Sætter gyroskopet op, indeholder GyroInit()
-*/
+ */
 void gyroSetup(); 
