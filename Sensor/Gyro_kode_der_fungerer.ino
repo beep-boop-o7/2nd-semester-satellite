@@ -1,111 +1,49 @@
-#include <SPI.h>
-#include <math.h>
-#define CS_PIN 8
+#include "Gyro.h"
+#include <krnl.h>
 
-// Globale variabler
-struct {
-  float Angle = 0;
-  float Filtered = 0.0;
-  float offset = 0.0;
-  float Sensitivity = 0.0048;
-  unsigned long LastTime = 0;
-} Gyro_var;
+#define SPI_CLOCK A0
+#define SPI_MOSI A1
+#define SPI_MISO A2
+#define CS_PIN A3
 
-void GyroMeasurementMode() {
-  // Enable measurement mode
-  digitalWrite(CS_PIN, LOW);
-  SPI.transfer(0x10);
-  SPI.transfer(0x02);
-  digitalWrite(CS_PIN, HIGH);
+void task1() {
+	delay(100);
+  GyroInit(1000, CS_PIN);
+  Gyro_var.LastTime = micros();
 
-  delayMicroseconds(50);
+	while (1) {
+    updateGyro();
+    Serial.print(" til tiden: ");
+    Serial.println(millis());
+		k_sleep(10);
+	}
 }
 
-void GyroVerifyConnection() {
-  // Check ID
-  digitalWrite(CS_PIN, LOW);
-  SPI.transfer(0x80);
-  uint8_t id = SPI.transfer(0x00);
-  digitalWrite(CS_PIN, HIGH);
-
-  Serial.print("ID (173 forventet): ");
-  Serial.println(id);
-  delayMicroseconds(50);
-
-  // Verify
-  digitalWrite(CS_PIN, LOW);
-  SPI.transfer(0x90);
-  uint8_t val = SPI.transfer(0x00);
-  digitalWrite(CS_PIN, HIGH);
-
-  Serial.print("POWER_CTL (2 forventet): ");
-  Serial.println(val);
-  delayMicroseconds(50);
-}
-
-int16_t readGyroX() {
-  digitalWrite(CS_PIN, LOW);
-  SPI.transfer(0x8A);
-  uint8_t low = SPI.transfer(0x00);
-  uint8_t high = SPI.transfer(0x00);
-  digitalWrite(CS_PIN, HIGH);
-
-  return (high << 8) | low;
-}
-
-void calibrateGyro(int samples) {
-  Serial.println("Kalibrerer... hold sensoren stille");
-  long sum = 0;
-  for (int i = 0; i < samples; i++) {
-    int16_t raw = readGyroX();
-
-    sum += raw;
-    delay(5);
-  }
-  Gyro_var.offset = (float)sum / samples;
-  Serial.print("Offset: ");
-  Serial.println(Gyro_var.offset);
-}
-
-void GyroInit(int samples) {
-  GyroVerifyConnection();
-  GyroMeasurementMode();
-  calibrateGyro(samples);
-}
-
-void updateGyro() {
-  int32_t raw = readGyroX();
-
-  unsigned long now = micros();
-  float dt = (now - Gyro_var.LastTime) * 1e-6f;
-  Gyro_var.LastTime = now;
-
-  float rate_dps = (raw - Gyro_var.offset) * Gyro_var.Sensitivity;
-
-  // Kun langsom bias-tracking når der er reel ro
-  if (fabs(rate_dps) < 0.2f) {
-    Gyro_var.offset = 0.999f * Gyro_var.offset + 0.001f * raw;
-  }
-
-  Gyro_var.Angle += rate_dps * dt;
-
-  Serial.print(Gyro_var.Angle, 1);
-}
+#define STK 110
+char a1[STK];
+struct k_t *p1;
 
 void setup() {
-  Serial.begin(115200);
+	int res;
+	Serial.begin(115200);
+	while (!Serial);
   pinMode(CS_PIN, OUTPUT);
   digitalWrite(CS_PIN, HIGH);
-  SPI.begin();
-  SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE3));
-  delay(100);
-  GyroInit(1000);
-  Gyro_var.LastTime = micros();
+
+	k_init(1, 1, 0);  // init with space for one task and one semaphore
+	//           |--- num of mg Queues (0)
+	//        |----- num of semaphores (1)
+	//     |------------- num of tasks (1)
+
+	p1 = k_crt_task(task1, 10, a1, STK);
+
+	Init_SPI(SPI_MOSI, SPI_MISO, SPI_CLOCK);
+
+	res = k_start();  // 1 milli sec tick speed
+	// you will never return from k_start
+	Serial.print("ups an error occured: ");
+	Serial.println(res);
+	while (1);
 }
 
-void loop() {
-  updateGyro();
-  Serial.print(" til tiden: ");
-  Serial.println(millis());
-  delay(10);
-}
+void loop() {}
