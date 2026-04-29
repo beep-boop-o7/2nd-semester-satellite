@@ -22,4 +22,8 @@ void GyroInit(int samples);
 
 void updateGyro();
 
-void gyroSetup();
+
+/**
+ * @brief Sætter gyroskopet op, indeholder GyroInit()
+*/
+void gyroSetup(); 
