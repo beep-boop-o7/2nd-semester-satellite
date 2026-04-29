@@ -1,3 +1,6 @@
+#ifndef "Gyro.h"
+#define "Gyro.h"
+
 #include "../Integration/rt_spi.h"
 #include <math.h>
 #include <krnl.h>
@@ -53,3 +56,5 @@ void Update_Gyro(int CS_pin);
  * @param CS_pin the pin chip select is connected too
  */
 void Gyro_Setup(int CS_pin); 
+
+#endif
