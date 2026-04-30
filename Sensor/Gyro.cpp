@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include "Gyro.h"
 
 struct {
@@ -57,8 +58,8 @@ void Gyro_Init(int samples, int CS_pin) {
 void Update_Gyro(gyro_sensor_data *gyro_data, int CS_pin) {
   int32_t raw = Read_Gyro_Y(CS_pin);
 
-  unsigned long now = micros();
-  float dt = (now - Gyro_var.LastTime) * 1e-6f;
+  unsigned long now = millis();
+  float dt = (now - Gyro_var.LastTime) / 1000.0;
   Gyro_var.LastTime = now;
 
   float rate_dps = (raw - Gyro_var.offset) * Gyro_var.Sensitivity;
@@ -74,5 +75,5 @@ void Update_Gyro(gyro_sensor_data *gyro_data, int CS_pin) {
 
 void Gyro_Setup(int CS_pin){
   Gyro_Init(1000, CS_pin);
-  Gyro_var.LastTime = micros();
+  Gyro_var.LastTime = millis();
 }

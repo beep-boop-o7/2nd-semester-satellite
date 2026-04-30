@@ -15,7 +15,7 @@ typedef struct { //data for each axis
  * @param CS_pin the pin chip select is connected too
  * @param alert_pin the pin alert is connected to for alert signaled conversion
  */
-int Read_TMAG(hall_sensor_data *data, int CS_pin, int alert_pin);
+void Read_TMAG(hall_sensor_data *data, int CS_pin, int alert_pin);
 
 /**
  * @brief initilize TMAG5170

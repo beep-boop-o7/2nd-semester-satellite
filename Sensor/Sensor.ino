@@ -48,7 +48,7 @@ void Task_Hall() {
 void Task_Gyro() {
     gyro_sensor_data gyro_data;
 
-    k_set_sem_timer(Timed_Sem2, 100);
+    k_set_sem_timer(Timed_Sem2, 50);
 
     pinMode(GYRO_CS_PIN, OUTPUT);
     digitalWrite(GYRO_CS_PIN, HIGH);
@@ -56,7 +56,7 @@ void Task_Gyro() {
     Gyro_Setup(GYRO_CS_PIN);
 
     while (1) {
-        k_wait(Timed_Sem1, 0);
+        k_wait(Timed_Sem2, 0);
 
         Update_Gyro(&gyro_data, GYRO_CS_PIN);
 
@@ -85,18 +85,18 @@ void Task_Print() {
         if(k_receive(Queue_Gyro, &gyro_tmp, -1, &missed) != -1) {
             gyro_data = gyro_tmp;
         }
-        if(k_wait(Timed_Sem1, -1) >= 0) {
+        if(k_wait(Timed_Sem3, -1) > 0) {
             Serial.println("Hall Data");
             Serial.print("x: ");
             Serial.print(hall_data.x);
-            Serial.print("y: ");
+            Serial.print(" y: ");
             Serial.print(hall_data.y);
-            Serial.print("z: ");
+            Serial.print(" z: ");
             Serial.println(hall_data.z);
             Serial.println("Gyro Data");
             Serial.print("angle: ");
             Serial.print(gyro_data.Angle);
-            Serial.print("rate: ");
+            Serial.print(" rate: ");
             Serial.println(gyro_data.rate);
         }
     }
