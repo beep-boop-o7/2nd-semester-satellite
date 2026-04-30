@@ -2,7 +2,6 @@
 #include "Gyro.h"
 
 struct {
-  float Filtered = 0.0;
   float offset = 0.0;
   float Sensitivity = 0.0048;
   unsigned long LastTime = 0;
