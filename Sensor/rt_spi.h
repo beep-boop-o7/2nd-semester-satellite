@@ -2,6 +2,7 @@
 #define rt_spi
 
 #include <krnl.h>
+#include <Arduino.h>
 
 typedef struct { //data & status info
 	uint16_t status_bits;

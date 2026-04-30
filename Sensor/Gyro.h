@@ -1,29 +1,26 @@
-#include <SPI.h>
+#ifndef Gyroscope
+#define Gyroscope
+
+#include "rt_spi.h"
 #include <math.h>
-#define CS_PIN 8
+#include <krnl.h>
 
-struct {
-  float Angle = 0;
-  float Filtered = 0.0;
-  float offset = 0.0;
-  float Sensitivity = 0.0048;
-  unsigned long LastTime = 0;
-} Gyro_var;
-
-void GyroMeasurementMode();
-
-void GyroVerifyConnection();
-
-int16_t readGyroY();
-
-void calibrateGyro(int samples);
-
-void GyroInit(int samples);
-
-void updateGyro();
-
+typedef struct{
+    float Angle;
+    float rate;
+} gyro_sensor_data;
 
 /**
- * @brief Sætter gyroskopet op, indeholder GyroInit()
-*/
-void gyroSetup(); 
+ * @brief updates gyroscope (needs clarification)
+ * @param gyro_data struct data will be returned in
+ * @param CS_pin the pin chip select is connected too
+ */
+void Update_Gyro(gyro_sensor_data *gyro_data, int CS_pin);
+
+/**
+ * @brief Starter gyroskopet, og indeholder GyroInit()
+ * @param CS_pin the pin chip select is connected too
+ */
+void Gyro_Setup(int CS_pin); 
+
+#endif
