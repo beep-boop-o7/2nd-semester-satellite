@@ -10,7 +10,7 @@ struct {
 void Gyro_Measurement_Mode(int CS_pin) {
   // Enable measurement mode
   SPI_Write_16(CS_pin, 3, 0x10, 0x02);
-
+  SPI_Write_16(CS_pin, 3, 0x11, 0x50);
   k_sleep(1);
 }
 
