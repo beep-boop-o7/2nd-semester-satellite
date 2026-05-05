@@ -22,7 +22,7 @@ void Init_SPI(int MOSI_pin, int MISO_pin, int clock_pin);
  * @param chip_select_pin the pin that the chip select of the slave you want to comunicate with is connected to
  * @param SPI_mode the SPI mode of the slave (0, 1, 2, 3)
  * @param target_register 7bit address of the register you want to write to
- * @param next_command next command input (idk)
+ * @param next_command (0) do nothing (1) start conversion at CS high
  * @param data_struct 16bits to write in register and 12 bits of status returned
  */
 int SPI_Write_32_CRC(int chip_select_pin, int SPI_mode, uint8_t target_register, uint8_t next_command, SPI_data_32 *data_struct);
@@ -32,7 +32,7 @@ int SPI_Write_32_CRC(int chip_select_pin, int SPI_mode, uint8_t target_register,
  * @param chip_select_pin the pin that the chip select of the slave you want to comunicate with is connected to
  * @param SPI_mode the SPI mode of the slave (0, 1, 2, 3)
  * @param target_register 7bit address of the register you want to read from
- * @param next_command next command input (idk)
+ * @param next_command (0) do nothing (1) start conversion at CS high
  * @param data_struct 16bits to read from register and 12 bits of status
  */
 int SPI_Read_32_CRC(int chip_select_pin, int SPI_mode, uint8_t target_register, uint8_t next_command, SPI_data_32 *data_struct);
