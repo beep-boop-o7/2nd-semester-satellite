@@ -13,13 +13,13 @@ void Read_TMAG(hall_sensor_data *data, int CS_pin, int alert_pin) {
     k_sleep(10);
     digitalWrite(alert_pin, HIGH);
     k_sleep(100);
-	SPI_Read_32_CRC(CS_pin, 0, 0x9, 1, &spi_data);
+	SPI_Read_32_CRC(CS_pin, 0, 0x9, 0, &spi_data);
 	data->x = ((double) ((int16_t)spi_data.data)) / 1308.0;
 
-	SPI_Read_32_CRC(CS_pin, 0, 0xA, 1, &spi_data);
+	SPI_Read_32_CRC(CS_pin, 0, 0xA, 0, &spi_data);
 	data->y = ((double) ((int16_t)spi_data.data)) / 1308.0;
 
-	SPI_Read_32_CRC(CS_pin, 0, 0xB, 1, &spi_data);
+	SPI_Read_32_CRC(CS_pin, 0, 0xB, 0, &spi_data);
 	data->z = ((double) ((int16_t)spi_data.data)) / 1308.0;
 }
 
