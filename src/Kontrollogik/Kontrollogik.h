@@ -14,7 +14,7 @@ typedef struct{
  * @param intended_direction 3d vector with length 1 in direction you want to point
  * @param current_rotation_rate 3d vector representing rotational velocity
  * @param magnetic_field 3d vector representing magnetic field
- * @param *reaction_command returned command
+ * @param reaction_command returned command
  */
 void Control_Magnetic(control_data intended_direction, control_data current_rotation_rate, control_data magnetic_field, control_data *magnetic_command);
 

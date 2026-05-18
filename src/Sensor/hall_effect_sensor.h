@@ -8,7 +8,6 @@ typedef struct { //data for each axis
 	float x, y, z;
 } hall_sensor_data;
 
-
 /**
  * @brief read x, y, z from TMAG5170
  * @param data struct that data will be returned in

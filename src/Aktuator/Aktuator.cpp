@@ -88,7 +88,9 @@ void Command_Magnetorquers(aktuator_data control_vector) {
     float y_current = _max_mA * fabs(control_vector.y);
     float z_current = _max_mA * fabs(control_vector.z);
 
-    uint8_t PWM_x, PWM_y, PWM_z;
+    uint8_t PWM_x = 0;
+    uint8_t PWM_y = 0;
+    uint8_t PWM_z = 0;
 
     uint8_t x_not_ready, y_not_ready, z_not_ready;
     uint8_t loops = 0;
