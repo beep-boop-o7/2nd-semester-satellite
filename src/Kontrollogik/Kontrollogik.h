@@ -2,6 +2,7 @@
 #define Kontrollogik
 
 #include <Arduino.h>
+#include <math.h>
 
 typedef struct{
     float x, y, z;
