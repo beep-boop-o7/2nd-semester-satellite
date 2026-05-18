@@ -21,9 +21,19 @@ void Command_Magnetorquers(aktuator_data control_vector);
 
 /**
  * @brief sets all pins for use in other functions and sets max mA per coil
- * @param _A A pin connected to x, y, z, select, sens
- * @param _B B pin connected to x, y, z, select, sens
- * @param _PWM A pin connected to x, y, z
+ * @param x_A A pin connected to x
+ * @param y_A A pin connected to y
+ * @param z_A A pin connected to z
+ * @param select_A A pin connected to select
+ * @param sens_A A pin connected to sens
+ * @param x_B B pin connected to x
+ * @param y_B B pin connected to y
+ * @param z_B B pin connected to z
+ * @param select_B B pin connected to select
+ * @param sens_B B pin connected to sens
+ * @param x_PWM PWM pin connected to x
+ * @param y_PWM PWM pin connected to y
+ * @param z_PWM PWM pin connected to z
  * @param max_mA max milliAmpere you want to pull on each coil (2 coils per axis)
  */
 void Init_Magnetorquers(uint8_t x_A, uint8_t x_B, uint8_t x_PWM, uint8_t y_A, uint8_t y_B, uint8_t y_PWM, uint8_t z_A, uint8_t z_B, uint8_t z_PWM, uint8_t select_A, uint8_t select_B, uint8_t sens_A, uint8_t sens_B, float max_mA);
