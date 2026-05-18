@@ -135,6 +135,8 @@ void Task_Control() {
             Control_Magnetic(command_direction, gyro_data, hall_data, &output_data);
             k_send(Queue_Mag, &output_data);
         }
+
+		k_sleep(1);
     }
 }
 
