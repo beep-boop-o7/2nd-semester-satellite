@@ -106,7 +106,7 @@ void Task_Control() {
     command_direction.y = 0;
     command_direction.z = 0;
 
-    float z_angle = 0;
+    double z_angle = 0;
 
     k_set_sem_timer(Timed_Sem3, 1000);
 
