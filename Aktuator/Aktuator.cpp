@@ -14,7 +14,7 @@ float _max_mA;
 //BAD
 
 float Read_Current(int axis) {
-    const float convertion_factor = 5.0/1024.0; //5v at 10bit resolution
+    const float convertion_factor = (5.0 / 1024.0) * (1000.0 / 20.1); //5V at 10bit resolution and convert V to mA
 
     switch (axis) {
         case 1: //x axis
