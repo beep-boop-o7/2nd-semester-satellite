@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Kontrollogik.h"
 
 control_data Scale_Vector(control_data input_vector, float scalar) {
@@ -8,16 +9,15 @@ control_data Scale_Vector(control_data input_vector, float scalar) {
     return scaled_vector;
 }
 
-float Basic_PID_Control(control_data intended_direction, control_data current_rotation_rate, float *I) {
+float Basic_PID_Control(control_data intended_direction, control_data current_rotation_rate, float *I) { //2d rotation
     float P, D;
     float proportion_constant = 0.5;
     float integration_constant = 0.0;
-    float differential_constant = -0.0;
-    float command_angle = acos(intended_direction.x / sqrtf(sq(intended_direction.x) + sq(intended_direction.y) + sq(intended_direction.z)));
-    float current_rotation = sqrtf(sq(current_rotation_rate.x) + sq(current_rotation_rate.y) + sq(current_rotation_rate.z));
-    P = command_angle * proportion_constant;
-    *I = ((*I / 2) + (command_angle / 2)) * integration_constant;
-    D = (current_rotation / command_angle) * differential_constant;
+    float differential_constant = 0.0;
+    float z_rotation = atan2f(intended_direction.y, integration_constant.x);
+    P = fabs(z_rotation) * proportion_constant;
+    *I = ((*I / 2) + (fabs(z_rotation) / 2)) * integration_constant;
+    D = (current_rotation_rate.z / z_rotation) * differential_constant;
     return (P + *I + D);
 }
 
