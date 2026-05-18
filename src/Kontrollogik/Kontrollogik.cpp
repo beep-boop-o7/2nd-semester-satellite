@@ -1,4 +1,3 @@
-#include <math.h>
 #include "Kontrollogik.h"
 
 control_data Scale_Vector(control_data input_vector, float scalar) {
