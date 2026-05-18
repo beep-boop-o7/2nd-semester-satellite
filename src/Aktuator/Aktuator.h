@@ -8,11 +8,6 @@ typedef struct{
     float x, y, z;
 } aktuator_data;
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 /**
  * @brief fast stops magnetorquers by grounding both side of the H-bridge
  */
@@ -42,9 +37,5 @@ void Command_Magnetorquers(aktuator_data control_vector);
  * @param max_mA max milliAmpere you want to pull on each coil (2 coils per axis)
  */
 void Init_Magnetorquers(uint8_t x_A, uint8_t x_B, uint8_t x_PWM, uint8_t y_A, uint8_t y_B, uint8_t y_PWM, uint8_t z_A, uint8_t z_B, uint8_t z_PWM, uint8_t select_A, uint8_t select_B, uint8_t sens_A, uint8_t sens_B, float max_mA);
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
 
 #endif
