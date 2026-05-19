@@ -169,13 +169,14 @@ control_data Convert_Msg(char *in_buffer) {
     command.y = 0.0;
     command.z = 0.0;
     char *buffer;
-    buffer = strsep(&in_buffer, "<|");
+	buffer = strsep(&in_buffer, "<");
+    buffer = strsep(&in_buffer, "|");
     if(buffer == nullptr) return command;
     command.x = atof(buffer);
-    buffer = strsep(&in_buffer, "<|");
+    buffer = strsep(&in_buffer, "|");
     if(buffer == nullptr) return command;
     command.y = atof(buffer);
-    buffer = strsep(&in_buffer, "<|");
+    buffer = strsep(&in_buffer, "|");
     if(buffer == nullptr) return command;
     command.z = atof(buffer);
     return command;
