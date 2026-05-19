@@ -168,7 +168,7 @@ control_data Convert_Msg(char *in_buffer) {
     command.x = 0.0;
     command.y = 0.0;
     command.z = 0.0;
-    char *buffer;
+    char *buffer; //<data|data|data>
 	buffer = strsep(&in_buffer, "<");
     buffer = strsep(&in_buffer, "|");
     if(buffer == nullptr) return command;
