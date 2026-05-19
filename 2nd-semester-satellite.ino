@@ -29,7 +29,7 @@
 #define MAXIMUM_MILLIAMPRE 150 //for now
 
 #define STK 150
-char t1[STK], t2[STK], t3[STK], t4[STK], t5[STK];
+char t1[STK], t2[STK], t3[STK], t4[300], t5[STK];
 
 struct k_t *pTask_Hall, *pTask_Gyro, *pTask_Control, *pTask_Mag, *pTask_C2;
 
@@ -158,7 +158,9 @@ void Task_Mag() {
     while (1) {
 		//loop magnetorquer
         if (k_receive(Queue_Mag, &tmp_cmd, -1, &missed) != -1) { //if command receved
+            Serial.println("msg");
             k_wait(Magnetic_Sem, 0); //mutex with hall effect sensor
+            Serial.println("sem");
             aktuator_data data;
             data.x = tmp_cmd.x;
             data.y = tmp_cmd.y;
@@ -240,7 +242,7 @@ void setup() {
 	pTask_Hall = k_crt_task(Task_Hall, 10, t1, STK);
 	pTask_Gyro = k_crt_task(Task_Gyro, 10 , t2, STK);
     pTask_Control = k_crt_task(Task_Control, 20, t3, STK);
-    pTask_Mag = k_crt_task(Task_Mag, 20, t4, STK);
+    pTask_Mag = k_crt_task(Task_Mag, 15, t4, STK);
     pTask_C2 = k_crt_task(Task_C2, 30, t5, STK);
 
 	Timed_Sem1 = k_crt_sem(0, 1); // 0: start value, 1: max value (clipping)

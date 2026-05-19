@@ -1,3 +1,4 @@
+#include "HardwareSerial.h"
 #include "Aktuator.h"
 
 //BAD
@@ -97,12 +98,15 @@ void Command_Magnetorquers(aktuator_data control_vector) {
 
     if(x_current > 0.1) {
         x_not_ready = 1;
+        Serial.println("x not ready");
     }
     if(y_current > 0.1) {
         y_not_ready = 1;
+        Serial.println("x not ready");
     }
     if(z_current > 0.1) {
         z_not_ready = 1;
+        Serial.println("x not ready");
     }
 
     while (((x_not_ready != 0) || (y_not_ready != 0) || (y_not_ready != 0)) && (loops < 250)) {
@@ -112,6 +116,8 @@ void Command_Magnetorquers(aktuator_data control_vector) {
             }else { //if we are drawing more current than we want to, decrease PWM and we are where we want to be
                 PWM_x--;
                 x_not_ready = 0;
+                Serial.print("x PWM:");
+                Serial.println(PWM_x);
             }
             analogWrite(_mag_PWM_pins.x, PWM_x);
         }
@@ -122,6 +128,8 @@ void Command_Magnetorquers(aktuator_data control_vector) {
             }else {
                 PWM_y--;
                 y_not_ready = 0;
+                Serial.print("y PWM:");
+                Serial.println(PWM_y);
             }
             analogWrite(_mag_PWM_pins.y, PWM_y);
         }
@@ -132,6 +140,8 @@ void Command_Magnetorquers(aktuator_data control_vector) {
             }else {
                 PWM_z--;
                 z_not_ready = 0;
+                Serial.print("z PWM:");
+                Serial.println(PWM_z);
             }
             analogWrite(_mag_PWM_pins.z, PWM_z);
         }
