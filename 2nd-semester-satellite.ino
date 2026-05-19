@@ -140,6 +140,10 @@ void Task_Control() {
         if(k_wait(Timed_Sem3, -1) > 0) {
             Control_Magnetic(command_direction, gyro_data, hall_data, &output_data);
             k_send(Queue_Mag, &output_data);
+            Serial.print("rate:");
+            Serial.println(gyro_data.z);
+            Serial.print("angle:");
+            Serial.println(gyro_tmp.Angle);
         }
 
 		k_sleep(1);
