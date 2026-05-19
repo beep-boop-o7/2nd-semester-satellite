@@ -1,4 +1,3 @@
-#include "Arduino.h"
 #include "Gyro.h"
 
 struct {
