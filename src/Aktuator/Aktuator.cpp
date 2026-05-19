@@ -54,9 +54,9 @@ void Stop_Magnetorquers() {
     digitalWrite(_mag_A_pins.y, 0);
     digitalWrite(_mag_B_pins.y, 0);
     digitalWrite(_mag_PWM_pins.y, 1);
-    digitalWrite(_mag_A_pins.z, 0);
-    digitalWrite(_mag_B_pins.z, 0);
-    digitalWrite(_mag_PWM_pins.z, 1);
+    // digitalWrite(_mag_A_pins.z, 0);
+    // digitalWrite(_mag_B_pins.z, 0);
+    // digitalWrite(_mag_PWM_pins.z, 1);
     digitalWrite(_mag_A_pins.select, 0);
     digitalWrite(_mag_B_pins.select, 0);
 }
@@ -77,23 +77,23 @@ void Command_Magnetorquers(aktuator_data control_vector) {
         digitalWrite(_mag_A_pins.y, 0);
         digitalWrite(_mag_B_pins.y, 1);
     }
-    if(control_vector.z > 0.0) {
-        digitalWrite(_mag_A_pins.z, 1);
-        digitalWrite(_mag_B_pins.z, 0);
-    }else {
-        digitalWrite(_mag_A_pins.z, 0);
-        digitalWrite(_mag_B_pins.z, 1);
-    }
+    // if(control_vector.z > 0.0) {
+    //     digitalWrite(_mag_A_pins.z, 1);
+    //     digitalWrite(_mag_B_pins.z, 0);
+    // }else {
+    //     digitalWrite(_mag_A_pins.z, 0);
+    //     digitalWrite(_mag_B_pins.z, 1);
+    // }
 
     float x_current = _max_mA * fabs(control_vector.x);
     float y_current = _max_mA * fabs(control_vector.y);
-    float z_current = _max_mA * fabs(control_vector.z);
+    //float z_current = _max_mA * fabs(control_vector.z);
 
     uint8_t PWM_x = 0;
     uint8_t PWM_y = 0;
-    uint8_t PWM_z = 0;
+    //uint8_t PWM_z = 0;
 
-    uint8_t x_not_ready, y_not_ready, z_not_ready;
+    uint8_t x_not_ready, y_not_ready;// z_not_ready;
     uint8_t loops = 0;
 
     if(x_current > 0.1) {
@@ -104,10 +104,10 @@ void Command_Magnetorquers(aktuator_data control_vector) {
         y_not_ready = 1;
         Serial.println("x not ready");
     }
-    if(z_current > 0.1) {
-        z_not_ready = 1;
-        Serial.println("x not ready");
-    }
+    // if(z_current > 0.1) {
+    //     z_not_ready = 1;
+    //     Serial.println("x not ready");
+    // }
 
     while (((x_not_ready != 0) || (y_not_ready != 0) || (y_not_ready != 0)) && (loops < 250)) {
         if(x_not_ready != 0) {
@@ -134,17 +134,17 @@ void Command_Magnetorquers(aktuator_data control_vector) {
             analogWrite(_mag_PWM_pins.y, PWM_y);
         }
 
-        if(z_not_ready != 0) {
-            if(Read_Current(3) < z_current) {
-                PWM_z++;
-            }else {
-                PWM_z--;
-                z_not_ready = 0;
-                Serial.print("z PWM:");
-                Serial.println(PWM_z);
-            }
-            analogWrite(_mag_PWM_pins.z, PWM_z);
-        }
+        // if(z_not_ready != 0) {
+        //     if(Read_Current(3) < z_current) {
+        //         PWM_z++;
+        //     }else {
+        //         PWM_z--;
+        //         z_not_ready = 0;
+        //         Serial.print("z PWM:");
+        //         Serial.println(PWM_z);
+        //     }
+        //     analogWrite(_mag_PWM_pins.z, PWM_z);
+        // }
 
         loops++;
     }
@@ -153,41 +153,41 @@ void Command_Magnetorquers(aktuator_data control_vector) {
 void Init_Magnetorquers(uint8_t x_A, uint8_t x_B, uint8_t x_PWM, uint8_t y_A, uint8_t y_B, uint8_t y_PWM, uint8_t z_A, uint8_t z_B, uint8_t z_PWM, uint8_t select_A, uint8_t select_B, uint8_t sens_A, uint8_t sens_B, float max_mA) {
     _mag_A_pins.x = x_A;
     _mag_A_pins.y = y_A;
-    _mag_A_pins.z = z_A;
+    //_mag_A_pins.z = z_A;
     _mag_A_pins.select = select_A;
     _mag_A_pins.sens = sens_A;
     _mag_B_pins.x = x_B;
     _mag_B_pins.y = y_B;
-    _mag_B_pins.z = z_B;
+    //_mag_B_pins.z = z_B;
     _mag_B_pins.select = select_B;
     _mag_B_pins.sens = sens_B;
     _mag_PWM_pins.x = x_PWM;
     _mag_PWM_pins.y = y_PWM;
-    _mag_PWM_pins.z = z_PWM;
+    //_mag_PWM_pins.z = z_PWM;
     _max_mA = max_mA;
 
     pinMode(x_A, OUTPUT);
     pinMode(y_A, OUTPUT);
-    pinMode(z_A, OUTPUT);
+    //pinMode(z_A, OUTPUT);
     pinMode(select_A, OUTPUT);
     pinMode(sens_A, INPUT);
     pinMode(x_B, OUTPUT);
     pinMode(y_B, OUTPUT);
-    pinMode(z_B, OUTPUT);
+    //pinMode(z_B, OUTPUT);
     pinMode(select_B, OUTPUT);
     pinMode(sens_B, INPUT);
     pinMode(x_PWM, OUTPUT);
     pinMode(y_PWM, OUTPUT);
-    pinMode(z_PWM, OUTPUT);
+    //pinMode(z_PWM, OUTPUT);
     digitalWrite(x_A, LOW);
     digitalWrite(y_A, LOW);
-    digitalWrite(z_A, LOW);
+    //digitalWrite(z_A, LOW);
     digitalWrite(select_A, LOW);
     digitalWrite(x_B, LOW);
     digitalWrite(y_B, LOW);
-    digitalWrite(z_B, LOW);
+    //digitalWrite(z_B, LOW);
     digitalWrite(select_B, LOW);
     digitalWrite(x_PWM, LOW);
     digitalWrite(y_PWM, LOW);
-    digitalWrite(z_PWM, LOW);
+    //digitalWrite(z_PWM, LOW);
 }
