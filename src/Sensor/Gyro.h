@@ -2,6 +2,7 @@
 #define Gyroscope
 
 #include "rt_spi.h"
+#include <Arduino.h>
 #include <math.h>
 #include <krnl.h>
 
