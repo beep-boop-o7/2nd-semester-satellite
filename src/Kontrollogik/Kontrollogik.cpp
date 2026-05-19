@@ -1,3 +1,4 @@
+#include <math.h>
 #include "Kontrollogik.h"
 
 control_data Scale_Vector(control_data input_vector, float scalar) {
@@ -10,7 +11,7 @@ control_data Scale_Vector(control_data input_vector, float scalar) {
 
 float Basic_PID_Control(control_data intended_direction, control_data current_rotation_rate, float *I) { //2d rotation
     float P, D;
-    float proportion_constant = 0.5;
+    float proportion_constant = 10.0;
     float integration_constant = 0.0;
     float differential_constant = 0.0;
     float z_rotation = atan2f(intended_direction.y, intended_direction.x);
@@ -45,7 +46,17 @@ void Control_Magnetic(control_data intended_direction, control_data current_rota
     static float I;
     control_data output_vector = Calculate_Magnetic_Output_Direction(intended_direction, magnetic_field);
     float scale_factor = Basic_PID_Control(intended_direction, current_rotation_rate, &I);
-    *magnetic_command = Scale_Vector(output_vector, scale_factor);
+    output_vector = Scale_Vector(output_vector, scale_factor);
+    if(fabs(output_vector.x) > 1) {
+        output_vector.x = output_vector.x / fabs(output_vector.x);
+    }
+    if(fabs(output_vector.y) > 1) {
+        output_vector.y = output_vector.y / fabs(output_vector.y);
+    }
+    if(fabs(output_vector.z) > 1) {
+        output_vector.z = output_vector.z / fabs(output_vector.z);
+    }
+    *magnetic_command = output_vector;
 }
 
 // void Control_Reaction(control_data intended_direction, control_data current_rotation_rate, control_data current_reaction, control_data *reaction_command) {

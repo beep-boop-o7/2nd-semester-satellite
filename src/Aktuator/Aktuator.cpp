@@ -95,13 +95,13 @@ void Command_Magnetorquers(aktuator_data control_vector) {
     uint8_t x_not_ready, y_not_ready, z_not_ready;
     uint8_t loops = 0;
 
-    if(x_current > 1.0) {
+    if(x_current > 0.1) {
         x_not_ready = 1;
     }
-    if(y_current > 1.0) {
+    if(y_current > 0.1) {
         y_not_ready = 1;
     }
-    if(z_current > 1.0) {
+    if(z_current > 0.1) {
         z_not_ready = 1;
     }
 
