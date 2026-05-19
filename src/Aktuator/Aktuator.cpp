@@ -1,5 +1,3 @@
-#include "Arduino.h"
-#include <cstdint>
 #include "Aktuator.h"
 
 //BAD
