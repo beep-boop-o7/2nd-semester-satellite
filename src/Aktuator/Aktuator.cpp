@@ -1,3 +1,5 @@
+#include "Arduino.h"
+#include <cstdint>
 #include "Aktuator.h"
 
 //BAD
@@ -5,33 +7,50 @@ struct{
     uint8_t x, y, z;
 } _mag_PWM_pins;
 struct{
-    uint8_t x, y, z, select, sens;
+    uint8_t x, y, z, sens;
 } _mag_A_pins;
 struct{
-    uint8_t x, y, z, select, sens;
+    uint8_t x, y, z, sens;
 } _mag_B_pins;
+struct{
+    uint8_t a_mask, b_mask;
+    volatile uint8_t *a_bank, *b_bank;
+} _mag_select_pins;
 float _max_mA;
 //BAD
+
+void PWM_Write(uint8_t pin, uint8_t value) {
+    switch (pin) {
+        case 9: //pin D9
+            OCR1A = value;
+            break;
+        case 10: //pin D10
+            OCR1B = value;
+            break;
+        default:
+            break;
+    }
+}
 
 float Read_Current(int axis) {
     const float convertion_factor = (5.0 / 1024.0) * (1000.0 / 20.1); //5V at 10bit resolution and convert V to mA
 
     switch (axis) {
         case 1: //x axis
-            digitalWrite(_mag_A_pins.select, 1);
-            digitalWrite(_mag_B_pins.select, 0);
+            *_mag_select_pins.a_bank |= _mag_select_pins.a_mask; //set to 1
+            *_mag_select_pins.b_bank &= ~_mag_select_pins.b_mask; //set to 0
             break;
         case 2: //y axis
-            digitalWrite(_mag_A_pins.select, 0);
-            digitalWrite(_mag_B_pins.select, 1);
+            *_mag_select_pins.a_bank &= ~_mag_select_pins.a_mask; //set to 0
+            *_mag_select_pins.b_bank |= _mag_select_pins.b_mask; //set to 1
             break;
         case 3: //z axis
-            digitalWrite(_mag_A_pins.select, 1);
-            digitalWrite(_mag_B_pins.select, 1);
+            *_mag_select_pins.a_bank |= _mag_select_pins.a_mask; //set to 1
+            *_mag_select_pins.b_bank |= _mag_select_pins.b_mask; //set to 1
             break;
         default: //if you did not select one of the three axis you will measure ground
-            digitalWrite(_mag_A_pins.select, 0);
-            digitalWrite(_mag_B_pins.select, 0);
+            *_mag_select_pins.a_bank &= ~_mag_select_pins.a_mask; //set to 0
+            *_mag_select_pins.b_bank &= ~_mag_select_pins.b_mask; //set to 0
             break;
     }
     delayMicroseconds(2); //signal propagation time for muliplexer is 450-720ns so wait 2us to be safe
@@ -49,10 +68,10 @@ float Read_Current(int axis) {
 void Stop_Magnetorquers() {
     digitalWrite(_mag_A_pins.x, 0);
     digitalWrite(_mag_B_pins.x, 0);
-    digitalWrite(_mag_PWM_pins.x, 1);
+    PWM_Write(_mag_PWM_pins.x, 255);
     digitalWrite(_mag_A_pins.y, 0);
     digitalWrite(_mag_B_pins.y, 0);
-    digitalWrite(_mag_PWM_pins.y, 1);
+    PWM_Write(_mag_PWM_pins.y, 255);
     // digitalWrite(_mag_A_pins.z, 0);
     // digitalWrite(_mag_B_pins.z, 0);
     // digitalWrite(_mag_PWM_pins.z, 1);
@@ -62,24 +81,10 @@ void Stop_Magnetorquers() {
 
 void Command_Magnetorquers(aktuator_data control_vector) {
 
-    digitalWrite(_mag_PWM_pins.x, 0);
-    digitalWrite(_mag_PWM_pins.y, 0);
+    PWM_Write(_mag_PWM_pins.x, 0);
+    PWM_Write(_mag_PWM_pins.y, 0);
     // digitalWrite(_mag_PWM_pins.z, 0);
 
-    if(control_vector.x > 0.0) {
-        digitalWrite(_mag_A_pins.x, 1);
-        digitalWrite(_mag_B_pins.x, 0);
-    }else {
-        digitalWrite(_mag_A_pins.x, 0);
-        digitalWrite(_mag_B_pins.x, 1);
-    }
-    if(control_vector.y > 0.0) {
-        digitalWrite(_mag_A_pins.y, 1);
-        digitalWrite(_mag_B_pins.y, 0);
-    }else {
-        digitalWrite(_mag_A_pins.y, 0);
-        digitalWrite(_mag_B_pins.y, 1);
-    }
     // if(control_vector.z > 0.0) {
     //     digitalWrite(_mag_A_pins.z, 1);
     //     digitalWrite(_mag_B_pins.z, 0);
@@ -102,18 +107,34 @@ void Command_Magnetorquers(aktuator_data control_vector) {
     if(x_current > 0.1) {
         x_not_ready = 1;
         Serial.println("x not ready");
+        if(control_vector.x > 0.0) {
+            digitalWrite(_mag_A_pins.x, 1);
+            digitalWrite(_mag_B_pins.x, 0);
+        }else {
+            digitalWrite(_mag_A_pins.x, 0);
+            digitalWrite(_mag_B_pins.x, 1);
+        }
     }
     if(y_current > 0.1) {
         y_not_ready = 1;
         Serial.println("y not ready");
+        if(control_vector.y > 0.0) {
+            digitalWrite(_mag_A_pins.y, 1);
+            digitalWrite(_mag_B_pins.y, 0);
+        }else {
+            digitalWrite(_mag_A_pins.y, 0);
+            digitalWrite(_mag_B_pins.y, 1);
+        }
     }
     // if(z_current > 0.1) {
     //     z_not_ready = 1;
     //     Serial.println("x not ready");
     // }
+    long x_time = 0;
+    long y_time = 0;
 
     while (((x_not_ready != 0) || (y_not_ready != 0) || (y_not_ready != 0)) && (loops < 250)) {
-        if(x_not_ready != 0) {
+        if((x_not_ready != 0) && (x_time < micros())) {
             if(Read_Current(1) < x_current) { //if we are drawing less current than we want to, increase PWM
                 PWM_x++;
             }else { //if we are drawing more current than we want to, decrease PWM and we are where we want to be
@@ -122,10 +143,11 @@ void Command_Magnetorquers(aktuator_data control_vector) {
                 Serial.print("x PWM:");
                 Serial.println(PWM_x);
             }
-            analogWrite(_mag_PWM_pins.x, PWM_x);
+            PWM_Write(_mag_PWM_pins.x, PWM_x);
+            x_time = micros() + 100; //pwm frequency is 63kHz so 15us per cycle
         }
 
-        if(y_not_ready != 0) {
+        if((y_not_ready != 0) && (x_time < micros())) {
             if(Read_Current(2) < y_current) {
                 PWM_y++;
             }else {
@@ -134,7 +156,8 @@ void Command_Magnetorquers(aktuator_data control_vector) {
                 Serial.print("y PWM:");
                 Serial.println(PWM_y);
             }
-            analogWrite(_mag_PWM_pins.y, PWM_y);
+            PWM_Write(_mag_PWM_pins.y, PWM_y);
+            y_time = micros() + 100;
         }
 
         // if(z_not_ready != 0) {
@@ -157,16 +180,18 @@ void Init_Magnetorquers(uint8_t x_A, uint8_t x_B, uint8_t x_PWM, uint8_t y_A, ui
     _mag_A_pins.x = x_A;
     _mag_A_pins.y = y_A;
     //_mag_A_pins.z = z_A;
-    _mag_A_pins.select = select_A;
     _mag_A_pins.sens = sens_A;
     _mag_B_pins.x = x_B;
     _mag_B_pins.y = y_B;
     //_mag_B_pins.z = z_B;
-    _mag_B_pins.select = select_B;
     _mag_B_pins.sens = sens_B;
     _mag_PWM_pins.x = x_PWM;
     _mag_PWM_pins.y = y_PWM;
     //_mag_PWM_pins.z = z_PWM;
+    _mag_select_pins.a_mask = digitalPinToBitMask(select_A);
+    _mag_select_pins.b_mask = digitalPinToBitMask(select_B);
+    _mag_select_pins.a_bank = portOutputRegister(digitalPinToPort(select_A));
+    _mag_select_pins.b_bank = portOutputRegister(digitalPinToPort(select_B));
     _max_mA = max_mA;
 
     pinMode(x_A, OUTPUT);
@@ -190,7 +215,12 @@ void Init_Magnetorquers(uint8_t x_A, uint8_t x_B, uint8_t x_PWM, uint8_t y_A, ui
     digitalWrite(y_B, LOW);
     //digitalWrite(z_B, LOW);
     digitalWrite(select_B, LOW);
-    digitalWrite(x_PWM, LOW);
-    digitalWrite(y_PWM, LOW);
+    PWM_Write(x_PWM, 0);
+    PWM_Write(y_PWM, 0);
     //digitalWrite(z_PWM, LOW);
+
+    //set pwm to ~63kHz
+    TCCR1A = 0b10100001; //set timer register A (10 (pwm active) 10 (pwm active) 00 (reserved) 01 (8bit output))
+    TCCR1B = 0b00001001; //set timer register B (0 (input noise cancel off) 0 (input capture on falling edge) 0 (reserved) 01 (8bit output) 001(no prescaling))
+    TCCR1C = 0b00000000; //set timer register C (00 (force output capture) 000000 (reserved))
 }
