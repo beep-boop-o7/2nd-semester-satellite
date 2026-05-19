@@ -62,6 +62,10 @@ void Stop_Magnetorquers() {
 
 void Command_Magnetorquers(aktuator_data control_vector) {
 
+    digitalWrite(_mag_PWM_pins.x, 0);
+    digitalWrite(_mag_PWM_pins.y, 0);
+    // digitalWrite(_mag_PWM_pins.z, 0);
+
     if(control_vector.x > 0.0) {
         digitalWrite(_mag_A_pins.x, 1);
         digitalWrite(_mag_B_pins.x, 0);
@@ -101,7 +105,7 @@ void Command_Magnetorquers(aktuator_data control_vector) {
     }
     if(y_current > 0.1) {
         y_not_ready = 1;
-        Serial.println("x not ready");
+        Serial.println("y not ready");
     }
     // if(z_current > 0.1) {
     //     z_not_ready = 1;
