@@ -13,7 +13,7 @@ float Basic_PID_Control(control_data intended_direction, control_data current_ro
     float proportion_constant = 0.5;
     float integration_constant = 0.0;
     float differential_constant = 0.0;
-    float z_rotation = atan2f(intended_direction.y, integration_constant.x);
+    float z_rotation = atan2f(intended_direction.y, intended_direction.x);
     P = fabs(z_rotation) * proportion_constant;
     *I = ((*I / 2) + (fabs(z_rotation) / 2)) * integration_constant;
     D = (current_rotation_rate.z / z_rotation) * differential_constant;
