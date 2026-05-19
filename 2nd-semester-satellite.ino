@@ -46,6 +46,7 @@ control_data C2_Data_Queue[4];
 struct k_msg_t *Queue_Hall, *Queue_Gyro, *Queue_Mag, *Queue_C2;
 
 void Task_Hall() {
+	//setup hall effect sensor
     hall_sensor_data hall_data;
 
     k_set_sem_timer(Timed_Sem1, 100);
@@ -58,8 +59,9 @@ void Task_Hall() {
     Init_TMAG(HALL_CS_PIN);
 
     while (1) {
-        k_wait(Timed_Sem1, 0);
-        k_wait(Magnetic_Sem, 0);
+		//loop hall effect sensor
+        k_wait(Timed_Sem1, 0);   //read every 100ms
+        k_wait(Magnetic_Sem, 0); //mutex with magnetorquer
 
         Read_TMAG(&hall_data, HALL_CS_PIN, HALL_ALERT_PIN);
 
@@ -70,6 +72,7 @@ void Task_Hall() {
 }
 
 void Task_Gyro() {
+	//setup gyroscope
     gyro_sensor_data gyro_data;
 
     k_set_sem_timer(Timed_Sem2, 20);
@@ -80,6 +83,7 @@ void Task_Gyro() {
     Gyro_Setup(GYRO_CS_PIN);
 
     while (1) {
+		//loop gyroscope
         k_wait(Timed_Sem2, 0);
 
         Update_Gyro(&gyro_data, GYRO_CS_PIN);
@@ -89,11 +93,12 @@ void Task_Gyro() {
 }
 
 void Task_Control() {
-    hall_sensor_data hall_tmp;
+	//setup control
+    hall_sensor_data hall_tmp; //temp buckets for message queue
     gyro_sensor_data gyro_tmp;
     control_data gyro_data, hall_data, command_direction, output_data, C2_tmp;
     int missed;
-
+	
     hall_data.x = 0;
     hall_data.y = 0;
     hall_data.z = 0;
@@ -111,6 +116,7 @@ void Task_Control() {
     k_set_sem_timer(Timed_Sem3, 1000);
 
     while (1) {
+		//loop control
         if(k_receive(Queue_C2, &C2_tmp, -1, &missed) != -1) {
             command_direction = C2_tmp;
         }
@@ -124,7 +130,7 @@ void Task_Control() {
         if(k_receive(Queue_Gyro, &gyro_tmp, -1, &missed) != -1) {
             //if 3 axis gyro copy twice
             gyro_data.z = gyro_tmp.rate;
-            float z_rotation = atan2f(command_direction.y, command_direction.x);
+            float z_rotation = atan2f(command_direction.y, command_direction.x); //update direction
             float z_new_rotation = z_rotation + (gyro_tmp.Angle - z_angle);
             float z_scale = (sqrt(sq(command_direction.x) + sq(command_direction.y)) / sqrt(sq(sin(z_new_rotation)) + sq(cos(z_new_rotation))));
             command_direction.x = sin(z_new_rotation) * z_scale;
@@ -141,12 +147,14 @@ void Task_Control() {
 }
 
 void Task_Mag() {
+	//setup magnetorquer
     control_data tmp_cmd;
     int missed;
     Init_Magnetorquers(X_AXIS_A, X_AXIS_B, X_AXIS_PWM, Y_AXIS_A, Y_AXIS_B, Y_AXIS_PWM, Z_AXIS_A, Z_AXIS_B, Z_AXIS_PWM, MULTIPLEX_A, MULTIPLEX_B, SENS_A, SENS_B, MAXIMUM_MILLIAMPRE);
     while (1) {
-        if (k_receive(Queue_Mag, &tmp_cmd, -1, &missed) != -1) {
-            k_wait(Magnetic_Sem, 0);
+		//loop magnetorquer
+        if (k_receive(Queue_Mag, &tmp_cmd, -1, &missed) != -1) { //if command receved
+            k_wait(Magnetic_Sem, 0); //mutex with hall effect sensor
             aktuator_data data;
             data.x = tmp_cmd.x;
             data.y = tmp_cmd.y;
