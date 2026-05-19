@@ -2,6 +2,7 @@
 #define Hall_effect_TMAG
 
 #include "rt_spi.h"
+#include <Arduino.h>
 #include <krnl.h>
 
 typedef struct { //data for each axis
