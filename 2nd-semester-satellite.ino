@@ -29,7 +29,7 @@
 #define MAXIMUM_MILLIAMPRE 150 //for now
 
 #define STK 150
-char t1[STK], t2[STK], t3[STK], t4[300], t5[STK];
+char t1[STK], t2[STK], t3[STK], t4[STK], t5[STK];
 
 struct k_t *pTask_Hall, *pTask_Gyro, *pTask_Control, *pTask_Mag, *pTask_C2;
 
