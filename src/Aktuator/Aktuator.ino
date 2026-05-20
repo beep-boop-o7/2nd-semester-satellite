@@ -1,7 +1,7 @@
 #include "Aktuator.h"
 
 void setup() {
-    Init_Magnetorquers(12, 11, 10, 8, 7, 9, 5, 4, 6, 5, 2, A6, A7, 200.0);
+    Init_Magnetorquers(12, 11, 10, 8, 7, 9, 5, 4, 6, A5, 2, A6, A7, 200.0);
     Serial.begin(9600);
     while (!Serial);
 }
