@@ -73,8 +73,8 @@ void Stop_Magnetorquers() {
     // digitalWrite(_mag_A_pins.z, 0);
     // digitalWrite(_mag_B_pins.z, 0);
     // digitalWrite(_mag_PWM_pins.z, 1);
-    digitalWrite(_mag_A_pins.select, 0);
-    digitalWrite(_mag_B_pins.select, 0);
+    *_mag_select_pins.a_bank &= ~_mag_select_pins.a_mask; //set to 0
+    *_mag_select_pins.b_bank &= ~_mag_select_pins.b_mask; //set to 0
 }
 
 void Command_Magnetorquers(aktuator_data control_vector) {
@@ -99,7 +99,8 @@ void Command_Magnetorquers(aktuator_data control_vector) {
     uint8_t PWM_y = 0;
     //uint8_t PWM_z = 0;
 
-    uint8_t x_not_ready, y_not_ready;// z_not_ready;
+    uint8_t x_not_ready = 0; 
+   uint8_t y_not_ready = 0;// z_not_ready;
     uint8_t loops = 0;
 
     if(x_current > 0.1) {
