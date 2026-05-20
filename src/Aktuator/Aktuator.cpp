@@ -81,15 +81,6 @@ void Command_Magnetorquers(aktuator_data control_vector) {
 
     PWM_Write(_mag_PWM_pins.x, 0);
     PWM_Write(_mag_PWM_pins.y, 0);
-    // digitalWrite(_mag_PWM_pins.z, 0);
-
-    // if(control_vector.z > 0.0) {
-    //     digitalWrite(_mag_A_pins.z, 1);
-    //     digitalWrite(_mag_B_pins.z, 0);
-    // }else {
-    //     digitalWrite(_mag_A_pins.z, 0);
-    //     digitalWrite(_mag_B_pins.z, 1);
-    // }
 
     float x_current = _max_mA * fabs(control_vector.x);
     float y_current = _max_mA * fabs(control_vector.y);
@@ -99,12 +90,12 @@ void Command_Magnetorquers(aktuator_data control_vector) {
     uint8_t PWM_y = 0;
     //uint8_t PWM_z = 0;
 
-    uint8_t x_not_ready = 0; 
-   uint8_t y_not_ready = 0;// z_not_ready;
-    uint8_t loops = 0;
+    //uint8_t x_not_ready = 0; 
+    //uint8_t y_not_ready = 0;// z_not_ready;
+    //uint8_t loops = 0;
 
     if(x_current > 0.1) {
-        x_not_ready = 1;
+        //x_not_ready = 1;
         Serial.println("x not ready");
         if(control_vector.x > 0.0) {
             digitalWrite(_mag_A_pins.x, 1);
@@ -115,7 +106,7 @@ void Command_Magnetorquers(aktuator_data control_vector) {
         }
     }
     if(y_current > 0.1) {
-        y_not_ready = 1;
+        //y_not_ready = 1;
         Serial.println("y not ready");
         if(control_vector.y > 0.0) {
             digitalWrite(_mag_A_pins.y, 1);
@@ -129,64 +120,69 @@ void Command_Magnetorquers(aktuator_data control_vector) {
     //     z_not_ready = 1;
     //     Serial.println("x not ready");
     // }
-    long x_time = 0;
-    long y_time = 0;
+    PWM_x = map(x_current, 0, _max_mA, 0, 57);
+    PWM_y = map(y_current, 0, _max_mA, 0, 57);
+    PWM_Write(_mag_PWM_pins.x, PWM_x);
+    PWM_Write(_mag_PWM_pins.y, PWM_y);
+    // long x_time = 0;
+    // long y_time = 0;
+    
 
-    while (((x_not_ready != 0) || (y_not_ready != 0) || (y_not_ready != 0)) && (loops < 250)) {
-        if((x_not_ready != 0) && (x_time < micros())) {
-            if(Read_Current(1) < x_current) { //if we are drawing less current than we want to, increase PWM
-                PWM_x++;
-            }else { //if we are drawing more current than we want to, decrease PWM and we are where we want to be
-                PWM_x--;
-                x_not_ready = 0;
-                Serial.print("x PWM:");
-                Serial.println(PWM_x);
-            }
-            PWM_Write(_mag_PWM_pins.x, PWM_x);
-            x_time = micros() + 100; //pwm frequency is 63kHz so 15us per cycle
-        }
+    // while (((x_not_ready != 0) || (y_not_ready != 0) || (y_not_ready != 0)) && (loops < 250)) {
+    //     if((x_not_ready != 0) && (x_time < micros())) {
+    //         if(Read_Current(1) < x_current) { //if we are drawing less current than we want to, increase PWM
+    //             PWM_x++;
+    //         }else { //if we are drawing more current than we want to, decrease PWM and we are where we want to be
+    //             PWM_x--;
+    //             x_not_ready = 0;
+    //             Serial.print("x PWM:");
+    //             Serial.println(PWM_x);
+    //         }
+    //         PWM_Write(_mag_PWM_pins.x, PWM_x);
+    //         x_time = micros() + 100; //pwm frequency is 63kHz so 15us per cycle
+    //     }
 
-        if((y_not_ready != 0) && (x_time < micros())) {
-            if(Read_Current(2) < y_current) {
-                PWM_y++;
-            }else {
-                PWM_y--;
-                y_not_ready = 0;
-                Serial.print("y PWM:");
-                Serial.println(PWM_y);
-            }
-            PWM_Write(_mag_PWM_pins.y, PWM_y);
-            y_time = micros() + 100;
-        }
+    //     if((y_not_ready != 0) && (x_time < micros())) {
+    //         if(Read_Current(2) < y_current) {
+    //             PWM_y++;
+    //         }else {
+    //             PWM_y--;
+    //             y_not_ready = 0;
+    //             Serial.print("y PWM:");
+    //             Serial.println(PWM_y);
+    //         }
+    //         PWM_Write(_mag_PWM_pins.y, PWM_y);
+    //         y_time = micros() + 100;
+    //     }
 
-        // if(z_not_ready != 0) {
-        //     if(Read_Current(3) < z_current) {
-        //         PWM_z++;
-        //     }else {
-        //         PWM_z--;
-        //         z_not_ready = 0;
-        //         Serial.print("z PWM:");
-        //         Serial.println(PWM_z);
-        //     }
-        //     analogWrite(_mag_PWM_pins.z, PWM_z);
-        // }
+    //     // if(z_not_ready != 0) {
+    //     //     if(Read_Current(3) < z_current) {
+    //     //         PWM_z++;
+    //     //     }else {
+    //     //         PWM_z--;
+    //     //         z_not_ready = 0;
+    //     //         Serial.print("z PWM:");
+    //     //         Serial.println(PWM_z);
+    //     //     }
+    //     //     analogWrite(_mag_PWM_pins.z, PWM_z);
+    //     // }
 
-        loops++;
-    }
+    //     loops++;
+    // }
 }
 
 void Init_Magnetorquers(uint8_t x_A, uint8_t x_B, uint8_t x_PWM, uint8_t y_A, uint8_t y_B, uint8_t y_PWM, uint8_t z_A, uint8_t z_B, uint8_t z_PWM, uint8_t select_A, uint8_t select_B, uint8_t sens_A, uint8_t sens_B, float max_mA) {
     _mag_A_pins.x = x_A;
     _mag_A_pins.y = y_A;
-    //_mag_A_pins.z = z_A;
+    _mag_A_pins.z = z_A;
     _mag_A_pins.sens = sens_A;
     _mag_B_pins.x = x_B;
     _mag_B_pins.y = y_B;
-    //_mag_B_pins.z = z_B;
+    _mag_B_pins.z = z_B;
     _mag_B_pins.sens = sens_B;
     _mag_PWM_pins.x = x_PWM;
     _mag_PWM_pins.y = y_PWM;
-    //_mag_PWM_pins.z = z_PWM;
+    _mag_PWM_pins.z = z_PWM;
     _mag_select_pins.a_mask = digitalPinToBitMask(select_A);
     _mag_select_pins.b_mask = digitalPinToBitMask(select_B);
     _mag_select_pins.a_bank = portOutputRegister(digitalPinToPort(select_A));
